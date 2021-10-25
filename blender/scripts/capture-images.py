@@ -9,6 +9,8 @@ SCENE_NAME = "Scene"
 TOTAL_FRAMES = 50
 FRAME_NUM = 5
 ORIGIN_COORDS = np.array([5.0,5.0,15.0])
+
+OUTPUT_PATH = "/tmp/blender-output/"
 LABEL_MODIFIER = "near/training_"
 
 Z_AXIS_RANGE = ORIGIN_COORDS[2]*2
@@ -27,7 +29,7 @@ print("Starting Camera Location:")
 print(cameraOrigin)
 
 def rotateCamera(scene):
-    distance_scale_factor = random.uniform(0.5, 2.5)
+    distance_scale_factor = random.uniform(1.0, 2.5)
 
     if scene.frame_current % TOTAL_FRAMES == 0:
         print("adjusting origin")
@@ -47,7 +49,7 @@ def rotateCamera(scene):
 
     camera.location = np.dot(cameraOrigin, rotationMatrix)
 
-    path = f"C:/Users/Spencer/blender-output/{LABEL_MODIFIER}{scene.frame_current}.jpg"
+    path = f"{OUTPUT_PATH}/{LABEL_MODIFIER}{scene.frame_current}.jpg"
     scene.render.filepath = path
     bpy.ops.render.render(write_still=True)
 
