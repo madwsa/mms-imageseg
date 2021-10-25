@@ -4,10 +4,11 @@ import math
 import mathutils
 
 
-SCENE_NAME = "Scene.001"
+SCENE_NAME = "Scene"
 TOTAL_FRAMES = 100
 FRAME_NUM = 10
 ORIGIN_COORDS = np.array([10.0,10.0,15.0])
+LABEL_MODIFIER = "near/labelled_"
 
 Z_AXIS_RANGE = ORIGIN_COORDS[2]*2
 Z_AXIS_STEP = Z_AXIS_RANGE/(TOTAL_FRAMES/FRAME_NUM)
@@ -44,7 +45,7 @@ def rotateCamera(scene):
 
     camera.location = np.dot(cameraOrigin, rotationMatrix)
 
-    path = f"/tmp/blender-output/{scene.frame_current}.jpg"
+    path = f"/tmp/blender-output/{LABEL_MODIFIER}{scene.frame_current}.jpg"
     scene.render.filepath = path
     bpy.ops.render.render(write_still=True)
 
