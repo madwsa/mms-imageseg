@@ -4,11 +4,11 @@ import math
 import mathutils
 
 
-SCENE_NAME = "Scene"
+SCENE_NAME = "Scene.001"
 TOTAL_FRAMES = 100
 FRAME_NUM = 10
-ORIGIN_COORDS = np.array([10.0,10.0,15.0])
-LABEL_MODIFIER = "near/labelled_"
+ORIGIN_COORDS = np.array([3.0,3.0,5.0])
+LABEL_MODIFIER = "ibex/training_"
 
 Z_AXIS_RANGE = ORIGIN_COORDS[2]*2
 Z_AXIS_STEP = Z_AXIS_RANGE/(TOTAL_FRAMES/FRAME_NUM)
@@ -30,7 +30,7 @@ def rotateCamera(scene):
     if scene.frame_current % TOTAL_FRAMES == 0:
         print("adjusting origin")
         print(ORIGIN_COORDS)
-        cameraOrigin[2] = np.array(15)
+        cameraOrigin[2] = np.array(ORIGIN_COORDS[2])
 
     newTheta = theta * scene.frame_current
     rotationMatrix = np.array([[math.cos(newTheta), -math.sin(newTheta), 0],
