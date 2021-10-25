@@ -2,13 +2,13 @@ import bpy
 import numpy as np
 import math
 import mathutils
+import random
 
-
-SCENE_NAME = "Scene.001"
-TOTAL_FRAMES = 100
-FRAME_NUM = 10
+SCENE_NAME = "Scene"
+TOTAL_FRAMES = 50
+FRAME_NUM = 5
 ORIGIN_COORDS = np.array([3.0,3.0,5.0])
-LABEL_MODIFIER = "ibex/training_"
+LABEL_MODIFIER = "near/training_"
 
 Z_AXIS_RANGE = ORIGIN_COORDS[2]*2
 Z_AXIS_STEP = Z_AXIS_RANGE/(TOTAL_FRAMES/FRAME_NUM)
@@ -26,6 +26,7 @@ print("Starting Camera Location:")
 print(cameraOrigin)
 
 def rotateCamera(scene):
+    distance_scale_factor = random.uniform(0.5, 2.5)
 
     if scene.frame_current % TOTAL_FRAMES == 0:
         print("adjusting origin")
@@ -33,8 +34,8 @@ def rotateCamera(scene):
         cameraOrigin[2] = np.array(ORIGIN_COORDS[2])
 
     newTheta = theta * scene.frame_current
-    rotationMatrix = np.array([[math.cos(newTheta), -math.sin(newTheta), 0],
-            [math.sin(newTheta), math.cos(newTheta), 0],
+    rotationMatrix = np.array([[distance_scale_factor * math.cos(newTheta),distance_scale_factor * -math.sin(newTheta), 0],
+            [distance_scale_factor * math.sin(newTheta),distance_scale_factor * math.cos(newTheta), 0],
             [0, 0, 1]])
 
     if scene.frame_current % FRAME_NUM == 0 and scene.frame_current != 0:
