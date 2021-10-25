@@ -4,10 +4,11 @@ import math
 import mathutils
 import random
 
+
 SCENE_NAME = "Scene"
 TOTAL_FRAMES = 50
 FRAME_NUM = 5
-ORIGIN_COORDS = np.array([3.0,3.0,5.0])
+ORIGIN_COORDS = np.array([5.0,5.0,15.0])
 LABEL_MODIFIER = "near/training_"
 
 Z_AXIS_RANGE = ORIGIN_COORDS[2]*2
@@ -46,7 +47,7 @@ def rotateCamera(scene):
 
     camera.location = np.dot(cameraOrigin, rotationMatrix)
 
-    path = f"/tmp/blender-output/{LABEL_MODIFIER}{scene.frame_current}.jpg"
+    path = f"C:/Users/Spencer/blender-output/{LABEL_MODIFIER}{scene.frame_current}.jpg"
     scene.render.filepath = path
     bpy.ops.render.render(write_still=True)
 
