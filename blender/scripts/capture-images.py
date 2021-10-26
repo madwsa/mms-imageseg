@@ -5,14 +5,14 @@ import mathutils
 import random
 
 
-SCENE_NAME = "Scene"
+SCENE_NAME = "Scene.001"
 TOTAL_FRAMES = 50
 FRAME_NUM = 5
-ORIGIN_COORDS = np.array([5.0,5.0,15.0])
+ORIGIN_COORDS = np.array([4.0,4.0,8.0])
 DISTANCE_RANGE = 3
 
 OUTPUT_PATH = "/tmp/blender-output/"
-LABEL_MODIFIER = "near/training_"
+LABEL_MODIFIER = "ibex/training_"
 
 Z_AXIS_RANGE = ORIGIN_COORDS[2]*2
 Z_AXIS_STEP = Z_AXIS_RANGE/(TOTAL_FRAMES/FRAME_NUM)
@@ -41,7 +41,7 @@ def rotateCamera(scene, distance_scale_factor):
             [distance_scale_factor * math.sin(newTheta),distance_scale_factor * math.cos(newTheta), 0],
             [0, 0, 1]])
 
-    if scene.frame_current % FRAME_NUM == 0 and scene.frame_current != 0:
+    if scene.frame_current % FRAME_NUM == 0 and scene.frame_current != 0 and distance_scale_factor == 1:
         print(scene.frame_current)
         print("Current Z Value:")
         print(cameraOrigin[2] - Z_AXIS_STEP)
