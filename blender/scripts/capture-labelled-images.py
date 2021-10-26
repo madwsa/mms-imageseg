@@ -12,7 +12,7 @@ ORIGIN_COORDS = np.array([4.0,4.0,8.0])
 DISTANCE_RANGE = 3
 
 OUTPUT_PATH = "C:/Users/Spencer/blender-output"
-LABEL_MODIFIER = "ibex/training/"
+LABEL_MODIFIER = "ibex/labelled/"
 
 Z_AXIS_RANGE = ORIGIN_COORDS[2]*2
 Z_AXIS_STEP = Z_AXIS_RANGE/(TOTAL_FRAMES/FRAME_NUM)
