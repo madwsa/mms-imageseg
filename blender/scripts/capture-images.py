@@ -5,14 +5,14 @@ import mathutils
 import random
 
 
-SCENE_NAME = "Scene.001"
-TOTAL_FRAMES = 5000
-FRAME_NUM = 500
-ORIGIN_COORDS = np.array([4.0,4.0,8.0])
+SCENE_NAME = "Scene"
+TOTAL_FRAMES = 50
+FRAME_NUM = 5
+ORIGIN_COORDS = np.array([10.0,10.0,15.0])
 DISTANCE_RANGE = 3
 
-OUTPUT_PATH = "C:/Users/Spencer/blender-output"
-LABEL_MODIFIER = "ibex/training/"
+OUTPUT_PATH = "/tmp/blender-output"
+LABEL_MODIFIER = "near/training/"
 
 Z_AXIS_RANGE = ORIGIN_COORDS[2]*2
 Z_AXIS_STEP = Z_AXIS_RANGE/(TOTAL_FRAMES/FRAME_NUM)
