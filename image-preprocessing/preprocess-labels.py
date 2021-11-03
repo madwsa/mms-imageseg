@@ -1,6 +1,8 @@
 import numpy as np
 from PIL import Image
 import sys
+from os import listdir
+from os.path import isfile, join
 
 LABEL_COLORS = np.array([
     [255,0,0], #Solar Panels
@@ -53,7 +55,7 @@ def filter_black(pixel, epsilon):
     else:
         return (np.array([0,0,0]), True)
 
-def process_image(img_path, label_colors, epsilon = np.array([25,25,25])):
+def process_image(img_path, output_dir, label_colors, epsilon = np.array([25,25,25])):
     """Standardize colors in images and make all nearly-black into black.
 
     img_path : path to the img in question
@@ -86,12 +88,26 @@ def process_image(img_path, label_colors, epsilon = np.array([25,25,25])):
                 else:
                     closest_color = closest(pixel_black_adjusted, label_colors)
                     new_pixel_map[x,y] = (closest_color[0], closest_color[1], closest_color[2])
-        
-    new_image.show()
+
+    file_part = img_path.split("/")[-1]
+    new_filename = f"{output_dir}/{file_part}"
+    new_image.save(new_filename)
+
+def enumerate_images(input_dir):
+    """Get a path to all files in the specified dir.
+
+    input_dir : string
+        input path to the directory with the image files
+    """
+    return [join(input_dir, f) for f in listdir(input_dir) if isfile(join(input_dir, f))]
 
 
 if __name__ == "__main__":
-    IMG_PATH = sys.argv[1]
-    epsilon_float_val = float(sys.argv[2])
+    IMG_DIR = sys.argv[1]
+    OUTPUT_DIR = sys.argv[2]
+    input_imgs = enumerate_images(IMG_DIR)
+    epsilon_float_val = float(sys.argv[3])
+
     EPSILON = np.array([epsilon_float_val, epsilon_float_val, epsilon_float_val])
-    process_image(IMG_PATH, LABEL_COLORS)
+    for img in input_imgs:
+        process_image(img, OUTPUT_DIR, LABEL_COLORS, EPSILON)
