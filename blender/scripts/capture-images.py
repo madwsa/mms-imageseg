@@ -24,7 +24,7 @@ theta = 2 * math.pi/FRAME_NUM
 
 bpy.data.scenes[SCENE_NAME].render.resolution_x = 800
 bpy.data.scenes[SCENE_NAME].render.resolution_y = 600
-bpy.data.scenes[SCENE_NAME].render.image_settings.file_format='JPEG'
+bpy.data.scenes[SCENE_NAME].render.image_settings.file_format='PNG'
 
 print("Starting Camera Location:")
 print(cameraOrigin)
@@ -49,7 +49,7 @@ def rotateCamera(scene, distance_scale_factor):
 
     camera.location = np.dot(cameraOrigin, rotationMatrix)
 
-    path = f"{OUTPUT_PATH}/{LABEL_MODIFIER}{scene.frame_current}_{distance_scale_factor}.jpg"
+    path = f"{OUTPUT_PATH}/{LABEL_MODIFIER}{scene.frame_current}_{distance_scale_factor}.png"
     scene.render.filepath = path
     bpy.ops.render.render(write_still=True)
 
