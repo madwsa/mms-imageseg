@@ -1,0 +1,1 @@
+`preprocess_labels.py` is no longer part of our dataset generation process; it reflects an early attempt to coax a rendered image from blender into the correct RGB color values for our ground truth segmentation masks.
