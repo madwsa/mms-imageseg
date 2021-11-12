@@ -14,7 +14,8 @@ LABEL_COLORS = np.array([
     [255,128,128], #Main Thrusters
     [255,204,77], #Rotational Thrusters
     [128,255,255], #Sensors
-    [64,128,192] #Launch Vehicle Adapter
+    [64,128,192], #Launch Vehicle Adapter
+    [0,0,0] #Black
 ])
 
 def closest(color, label_colors):
@@ -25,7 +26,7 @@ def closest(color, label_colors):
     label_colors : np.array of shape (n, 3) 
         n is the number of colors to choose from.
 
-    Returns an np.array of shape (3) with the closest color
+    Returns an np.array of shape (3) with the closest color, and an index into the label_colors array (used for classing)
 
     Source: https://stackoverflow.com/questions/54242194/python-find-the-closest-color-to-a-color-from-giving-list-of-colors
     """
@@ -33,7 +34,7 @@ def closest(color, label_colors):
     distances = np.sqrt(np.sum((label_colors-color)**2,axis=1))
     index_of_smallest = np.where(distances==np.amin(distances))
     smallest_distance = label_colors[index_of_smallest]
-    return smallest_distance[0]
+    return smallest_distance[0], index_of_smallest[0]
 
 def filter_black(pixel, epsilon):
     """Convert an almost black pixel to black.
@@ -69,7 +70,6 @@ def process_image(img_path, output_dir, label_colors, epsilon = np.array([25,25,
     """
 
     new_image = Image.new('RGB', (800, 600))
-    new_pixel_map = new_image.load()
 
     with Image.open(img_path) as img:
         pix = img.load()
@@ -79,19 +79,18 @@ def process_image(img_path, output_dir, label_colors, epsilon = np.array([25,25,
         width, height = img.size
         if width != 800 or height != 600:
             print(f"Image Dimensions incorrect. Width was {width} and Height was {height}.")
+        grayscale_array = np.zeros((height, width), dtype=np.uint8)
         for x in range(0,width):
             for y in range(0,height):
                 pixel = np.array(pix[x,y])
-                pixel_black_adjusted, is_black = filter_black(pixel, epsilon)
-                if is_black:
-                    new_pixel_map[x,y] = (pixel_black_adjusted[0], pixel_black_adjusted[1], pixel_black_adjusted[2])
-                else:
-                    closest_color = closest(pixel_black_adjusted, label_colors)
-                    new_pixel_map[x,y] = (closest_color[0], closest_color[1], closest_color[2])
+                closest_color,label_color_index = closest(pixel, label_colors)
+                grayscale_array[y,x] = label_color_index
+
+    grayscale_img = Image.fromarray(grayscale_array)
 
     file_part = img_path.split("/")[-1]
     new_filename = f"{output_dir}/{file_part}"
-    new_image.save(new_filename)
+    grayscale_img.save(new_filename)
 
 def enumerate_images(input_dir):
     """Get a path to all files in the specified dir.
