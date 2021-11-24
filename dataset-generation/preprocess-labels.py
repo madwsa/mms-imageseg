@@ -7,6 +7,7 @@ from os.path import isfile, join
 from numpy.core.numeric import zeros_like
 
 LABEL_COLORS = np.array([
+    [0,0,0], #Black
     [255,0,0], #Solar Panels
     [0,255,0], #Drive Shaft
     [0,0,255], #Parabolic Antenna
@@ -16,8 +17,7 @@ LABEL_COLORS = np.array([
     [255,128,128], #Main Thrusters
     [255,204,77], #Rotational Thrusters
     [128,255,255], #Sensors
-    [64,128,192], #Launch Vehicle Adapter
-    [0,0,0] #Black
+    [64,128,192] #Launch Vehicle Adapter
 ])
 
 LABEL_COLOR_INDEX_MAP = {}
@@ -60,40 +60,32 @@ def process_image(img_path, output_dir, label_colors, epsilon = 10):
     """
 
     img = Image.open(img_path).convert('RGB')
-    arr = np.array(img)
 
-    zero_array = np.zeros((3))
+    arr = np.array(img)
 
     blackish = arr[:, :, :] <= np.array((epsilon,epsilon,epsilon))
 
     arr[blackish] = 0
 
-    f = lambda p: LABEL_COLOR_INDEX_MAP[p[0],p[1],p[2]]
+    width, height = img.size
+    if width != 800 or height != 600:
+        print(f"Image Dimensions incorrect. Width was {width} and Height was {height}.")
+    grayscale_array = np.zeros((height, width), dtype=np.uint8)
+    for x in range(0,width):
+        for y in range(0,height):
+            # Only search for closest color if not already black
+            if np.any(arr[y,x]):
+                closest_color,label_color_index = closest(arr[y,x], label_colors)
+                grayscale_array[y,x] = label_color_index
+            else:
+                grayscale_array[y,x] = 0
 
-    out = np.apply_along_axis(f, 2, arr)
+    grayscale_img = Image.fromarray(grayscale_array, 'L')
+    print(grayscale_img.format)
 
-    print(out)
-
-    # with Image.open(img_path) as img:
-    #     pix = img.load()
-    #     if img.mode != 'RGB':
-    #         print("Image Mode not RGB.")
-    #         sys.exit(1)
-    #     width, height = img.size
-    #     if width != 800 or height != 600:
-    #         print(f"Image Dimensions incorrect. Width was {width} and Height was {height}.")
-    #     grayscale_array = np.zeros((height, width), dtype=np.uint8)
-    #     for x in range(0,width):
-    #         for y in range(0,height):
-    #             pixel = np.array(pix[x,y])
-    #             closest_color,label_color_index = closest(pixel, label_colors)
-    #             grayscale_array[y,x] = label_color_index
-
-    # grayscale_img = Image.fromarray(grayscale_array)
-
-    # file_part = img_path.split("/")[-1]
-    # new_filename = f"{output_dir}/{file_part}"
-    # grayscale_img.save(new_filename)
+    file_part = img_path.split("/")[-1]
+    new_filename = f"{output_dir}/{file_part}"
+    grayscale_img.save(new_filename)
 
 def enumerate_images(input_dir):
     """Get a path to all files in the specified dir.
