@@ -8,6 +8,8 @@ from datetime import datetime
 from numpy.core.numeric import zeros_like
 from numpy.lib.twodim_base import mask_indices
 
+from tqdm import tqdm
+
 LABEL_COLORS = np.array([
     [0,0,0], #Black
     [255,0,0], #Solar Panels
@@ -125,5 +127,5 @@ if __name__ == "__main__":
     OUTPUT_DIR = sys.argv[2]
     input_imgs = enumerate_images(IMG_DIR)
     EPSILON = int(sys.argv[3])
-    for img in input_imgs:
+    for img in tqdm(input_imgs):
         process_image(img, OUTPUT_DIR, LABEL_COLORS, EPSILON)
