@@ -3,8 +3,10 @@ from PIL import Image
 import sys
 from os import listdir
 from os.path import isfile, join
+from datetime import datetime
 
 from numpy.core.numeric import zeros_like
+from numpy.lib.twodim_base import mask_indices
 
 LABEL_COLORS = np.array([
     [0,0,0], #Black
@@ -20,12 +22,33 @@ LABEL_COLORS = np.array([
     [64,128,192] #Launch Vehicle Adapter
 ])
 
-LABEL_COLOR_INDEX_MAP = {}
+NEW_LABELS = [
+    (2,5,7),
+    (208,0,0),
+    (0,208,0),
+    (0,0,208),
+    (208,208,0),
+    (208,0,208),
+    (0,208,208),
+    (208,188,188),
+    (208,202,172),
+    (188,208,208),
+    (166,188,200)
+]
 
-for i in range(len(LABEL_COLORS)):
-    LABEL_COLOR_INDEX_MAP[(LABEL_COLORS[i][0], LABEL_COLORS[i][1], LABEL_COLORS[i][2])] = i
-
-print(LABEL_COLOR_INDEX_MAP)
+PALETTE = [2,5,7,
+    208,0,0,
+    0,208,0,
+    0,0,208,
+    208,208,0,
+    208,0,208,
+    0,208,208,
+    208,188,188,
+    208,202,172,
+    188,208,208,
+    166,188,200]
+# Pad with zeroes to 768 values, i.e. 256 RGB colours
+PALETTE = PALETTE + [0]*(768-len(PALETTE))
 
 def closest(color, label_colors):
     """Find the closest color.
@@ -60,31 +83,32 @@ def process_image(img_path, output_dir, label_colors, epsilon = 10):
     """
 
     img = Image.open(img_path).convert('RGB')
-
     arr = np.array(img)
 
-    blackish = arr[:, :, :] <= np.array((epsilon,epsilon,epsilon))
 
-    arr[blackish] = 0
+    # TEST CODE
+    # img = np.full((6, 8, 3), np.array((2,5,7)))
+    # arr = np.array(img)
 
-    width, height = img.size
-    if width != 800 or height != 600:
-        print(f"Image Dimensions incorrect. Width was {width} and Height was {height}.")
-    grayscale_array = np.zeros((height, width), dtype=np.uint8)
-    for x in range(0,width):
-        for y in range(0,height):
-            # Only search for closest color if not already black
-            if np.any(arr[y,x]):
-                closest_color,label_color_index = closest(arr[y,x], label_colors)
-                grayscale_array[y,x] = label_color_index
-            else:
-                grayscale_array[y,x] = 0
+    # arr[2,2] = np.array((208,0,0))
 
-    grayscale_img = Image.fromarray(grayscale_array, 'L')
-    print(grayscale_img.format)
+    # arr[4,4] = np.array((0,208,208))
+
+    # END TEST CODE
+
+    i = 0
+    grayscale_array = np.zeros((600, 800), dtype=np.uint8)
+
+    for color in NEW_LABELS:
+        mask = arr[:, :, :] == np.array(color)
+        grayscale_array[np.all(mask, axis=-1)] = i
+        i += 1
+
+    grayscale_img = Image.fromarray(grayscale_array, 'P')
+    grayscale_img.putpalette(PALETTE)
 
     file_part = img_path.split("/")[-1]
-    new_filename = f"{output_dir}/{file_part}"
+    new_filename = f"{output_dir}/palette_{file_part}"
     grayscale_img.save(new_filename)
 
 def enumerate_images(input_dir):
