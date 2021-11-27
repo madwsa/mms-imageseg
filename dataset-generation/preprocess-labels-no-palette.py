@@ -111,7 +111,7 @@ def process_image(img_path, output_dir, labels):
     grayscale_img = Image.fromarray(grayscale_array, 'L')
 
     file_part = img_path.split("/")[-1]
-    new_filename = f"{output_dir}/palette_{file_part}"
+    new_filename = f"{output_dir}/no_palette_{file_part}"
     grayscale_img.save(new_filename)
 
 def enumerate_images(input_dir):
