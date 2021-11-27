@@ -108,8 +108,7 @@ def process_image(img_path, output_dir, label_colors, epsilon = 10):
         grayscale_array[np.all(mask, axis=-1)] = i
         i += 1
 
-    grayscale_img = Image.fromarray(grayscale_array, 'P')
-    grayscale_img.putpalette(PALETTE)
+    grayscale_img = Image.fromarray(grayscale_array, 'L')
 
     file_part = img_path.split("/")[-1]
     new_filename = f"{output_dir}/palette_{file_part}"
@@ -123,11 +122,22 @@ def enumerate_images(input_dir):
     """
     return [join(input_dir, f) for f in listdir(input_dir) if isfile(join(input_dir, f))]
 
+def get_new_labels(in_file):
+    colors = []
+    with open(in_file, "r") as color_file:
+        for line in color_file:
+            s = line.split(",")
+            colors.append((s[0], s[1], s[2]))
+
+    return colors
+
 
 if __name__ == "__main__":
     IMG_DIR = sys.argv[1]
     OUTPUT_DIR = sys.argv[2]
     input_imgs = enumerate_images(IMG_DIR)
     EPSILON = int(sys.argv[3])
+    if len(sys.argv) == 5:
+        LABEL_COLORS = get_new_labels(sys.argv[4])
     for img in tqdm(input_imgs):
         process_image(img, OUTPUT_DIR, LABEL_COLORS, EPSILON)
