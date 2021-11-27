@@ -72,7 +72,7 @@ def closest(color, label_colors):
     smallest_distance = label_colors[index_of_smallest]
     return smallest_distance[0], index_of_smallest[0]
 
-def process_image(img_path, output_dir, label_colors, epsilon = 10):
+def process_image(img_path, output_dir, labels):
     """Standardize colors in images and make all nearly-black into black.
 
     img_path : path to the img in question
@@ -103,7 +103,7 @@ def process_image(img_path, output_dir, label_colors, epsilon = 10):
     i = 0
     grayscale_array = np.zeros((600, 800), dtype=np.uint8)
 
-    for color in NEW_LABELS:
+    for color in labels:
         mask = arr[:, :, :] == np.array(color)
         grayscale_array[np.all(mask, axis=-1)] = i
         i += 1
@@ -126,8 +126,8 @@ def get_new_labels(in_file):
     colors = []
     with open(in_file, "r") as color_file:
         for line in color_file:
-            s = line.split(",")
-            colors.append((s[0], s[1], s[2]))
+            s = line.strip().split(",")
+            colors.append((int(s[0]), int(s[1]), int(s[2])))
 
     return colors
 
@@ -136,8 +136,9 @@ if __name__ == "__main__":
     IMG_DIR = sys.argv[1]
     OUTPUT_DIR = sys.argv[2]
     input_imgs = enumerate_images(IMG_DIR)
-    EPSILON = int(sys.argv[3])
-    if len(sys.argv) == 5:
-        LABEL_COLORS = get_new_labels(sys.argv[4])
+    labels = NEW_LABELS
+    if len(sys.argv) == 4:
+        labels = get_new_labels(sys.argv[3])
+    print(labels)
     for img in tqdm(input_imgs):
-        process_image(img, OUTPUT_DIR, LABEL_COLORS, EPSILON)
+        process_image(img, OUTPUT_DIR, labels)
