@@ -7,6 +7,7 @@ import numpy as np
 
 if len(sys.argv) != 3:
     print("USAGE: python3 visualize-output-tensor.py input-predictions.pt path/to/output-dir/")
+    exit(1)
 
 PALETTE = [
     0,0,0, #Black
@@ -24,7 +25,7 @@ PALETTE = [
 # Pad with zeroes to 768 values, i.e. 256 RGB colours
 PALETTE = PALETTE + [0]*(768-len(PALETTE))
 
-t = torch.load(sys.argv[1])
+t = torch.load(sys.argv[1], map_location=torch.device('cpu'))
 #im = transforms.ToPILImage()(t).convert("RGB")
 
 np.set_printoptions(threshold=np.inf)
